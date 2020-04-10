@@ -1,10 +1,11 @@
 let cartProductController = (function () {
 
-    let Product = function (id, name, desc, price) {
+    let Product = function (id, name, desc, price, imgSrc) {
         this.id = id;
         this.name = name;
         this.desc = desc;
         this.price = price;
+        this.imgSrc = imgSrc
     };
 
     Product.prototype.getAmount = function () {
@@ -14,10 +15,10 @@ let cartProductController = (function () {
 
     let productInfo = function () {
         return {
-            11: new Product(11, 'Strawberry', 'Strawberries are sweet and red', 3),
-            13: new Product(13, 'Onions', 'Onions are a veggie and usually fresh', 5),
-            15: new Product(15, 'Potato', 'Potato are a the most used veggie', 4),
-            17: new Product(17, 'Tomato', 'Tomato are used to make Ketchup', 6),
+            11: new Product(11, 'Strawberry', 'Strawberries are sweet and red', 3, 'images/strawberry.png'),
+            13: new Product(13, 'Onions', 'Onions are a veggie and usually fresh', 5,  'images/onions.png'),
+            15: new Product(15, 'Potato', 'Potato are a the most used veggie', 4,  'images/potato.png'),
+            17: new Product(17, 'Tomato', 'Tomato are used to make Ketchup', 6,  'images/tomato.png'),
         }
 
     }
@@ -45,6 +46,7 @@ let cartUiController = (function (productCtrl) {
         cartSubtotal: '#cart-subtotal',
         cartTax: '#cart-tax',
         cartTotal: '#cart-total',
+        cartProducts: '.cart-products'
 
     }
 
@@ -83,11 +85,53 @@ let cartUiController = (function (productCtrl) {
         document.querySelector(getDomStrings.cartTotal).textContent = cart.totalAmount;
     }
 
+    let getCartItemHtml = function (product) {
+        return `<div class="item" data-id="${product.id}">
+                        <div class="buttons">
+                            <span class="delete-btn"></span>
+                            <span class="like-btn"></span>
+                        </div>
+                        <div class="image">
+                            <img src="${product.imgSrc}" alt="${product.name}"/>
+                        </div>
+                        <div class="description">
+                            <span>${product.name}</span>
+                            <span>
+                                <span class="at-the-rate">@ </span>
+                                <span class="currency">$</span>
+                                <span class="price">${product.price}</span>
+                            </span>
+                        </div>
+
+                        <div class="quantity">
+                            <button class="plus-btn" type="button" name="button">
+                                <img src="images/plus.svg" alt=""/>
+                            </button>
+                            <input type="text" name="name" value="${product.qty}">
+                            <button class="minus-btn" type="button" name="button">
+                                <img src="images/minus.svg" alt=""/>
+                            </button>
+                        </div>
+
+                        <div class="total-price">${product.getAmount()}</div>
+                    </div>`;
+
+
+    }
+
     let updateProductsList = function (cart) {
-        document.querySelector(getDomStrings.cartQty).textContent = cart.totalQty;
-        document.querySelector(getDomStrings.cartSubtotal).textContent = cart.subTotal;
-        document.querySelector(getDomStrings.cartTax).textContent = cart.taxAmount;
-        document.querySelector(getDomStrings.cartTotal).textContent = cart.totalAmount;
+
+        let markup, product;
+
+        markup = (typeof markup === undefined) ? markup : '';
+
+        for (let i = 0; i < cart.products.length; i++) {
+            product = cart.products[i];
+            markup = markup + getCartItemHtml(product);
+        }
+
+        document.querySelector(getDomStrings.cartProducts).innerHTML = markup;
+
     }
 
     let updateCart = function (cart) {
@@ -214,7 +258,6 @@ let controller = (function (
 
         // Update Cart Data structure
         cart = dataCtrl.addToCart(productDetails);
-        console.warn(cart);
 
         // Update cart UI
         UICtrl.updateCart(cart);
