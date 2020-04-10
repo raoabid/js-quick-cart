@@ -41,7 +41,11 @@ let cartUiController = (function (productCtrl) {
         productGrid: '.products-grid',
         addToCart: 'add-to-cart',
         productQty: '.product-quantity',
-        cartQty: '#cart-qty'
+        cartQty: '#cart-qty',
+        cartSubtotal: '#cart-subtotal',
+        cartTax: '#cart-tax',
+        cartTotal: '#cart-total',
+
     }
 
     let getProductDetails = function (clickedItem) {
@@ -72,11 +76,24 @@ let cartUiController = (function (productCtrl) {
         );
     }
 
+    let updateCartTotals = function (cart) {
+        document.querySelector(getDomStrings.cartQty).textContent = cart.totalQty;
+        document.querySelector(getDomStrings.cartSubtotal).textContent = cart.subTotal;
+        document.querySelector(getDomStrings.cartTax).textContent = cart.taxAmount;
+        document.querySelector(getDomStrings.cartTotal).textContent = cart.totalAmount;
+    }
+
+    let updateProductsList = function (cart) {
+        document.querySelector(getDomStrings.cartQty).textContent = cart.totalQty;
+        document.querySelector(getDomStrings.cartSubtotal).textContent = cart.subTotal;
+        document.querySelector(getDomStrings.cartTax).textContent = cart.taxAmount;
+        document.querySelector(getDomStrings.cartTotal).textContent = cart.totalAmount;
+    }
+
     let updateCart = function (cart) {
-        document.querySelector(getDomStrings.cartQty).textContent = cart.totalQty;
-        document.querySelector(getDomStrings.cartQty).textContent = cart.totalQty;
-        document.querySelector(getDomStrings.cartQty).textContent = cart.totalQty;
-        document.querySelector(getDomStrings.cartQty).textContent = cart.totalQty;
+
+        updateProductsList(cart);
+        updateCartTotals(cart);
 
 
     }
