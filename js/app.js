@@ -134,11 +134,16 @@ let cartUiController = (function (productCtrl) {
 
     }
 
-    let updateCart = function (cart) {
+    let clearCart = function(cart){
 
         updateProductsList(cart);
         updateCartTotals(cart);
 
+    }
+
+    let updateCart = function (cart) {
+        updateProductsList(cart);
+        updateCartTotals(cart);
 
     }
 
@@ -147,7 +152,8 @@ let cartUiController = (function (productCtrl) {
         getProductDetails: getProductDetails,
         getDomStrings: getDomStrings,
         getProductId: getProductId,
-        updateCart: updateCart
+        updateCart: updateCart,
+        clearCart: clearCart
     }
 
 })(cartProductController);
@@ -285,6 +291,8 @@ let controller = (function (
 
     let init = function () {
         console.log('Application initialized');
+
+        UICtrl.clearCart(dataCtrl.getCart());
         setupEventListener();
     }
 
