@@ -175,10 +175,10 @@
             <h3 class="my-4">Cart</h3>
             <div class="shopping-cart">
                 <!-- Title -->
-                <div class="title">
-                    Shopping Bag
+                <div class="title d-flex justify-content-between">
+                    <span class="font-weight-bold">Shopping Bag</span>
+                    <span id="cart-qty" class="badge badge-pill badge-success">2</span>
                 </div>
-
                 <!-- Product #1 -->
                 <div class="item">
                     <div class="buttons">
@@ -209,6 +209,27 @@
                     <div class="total-price">$12</div>
                 </div>
 
+                <div class="title d-flex justify-content-between font-weight-bold">
+                    <span>Subtotal</span>
+                    <span>
+                        <span class="currency">$</span>
+                        <span id="cart-subtotal">12</span>
+                    </span>
+                </div>
+                <div class="title d-flex justify-content-between">
+                    <span>Tax Amount</span>
+                    <span>
+                        <span class="currency">$</span>
+                        <span id="cart--tax">1.2</span>
+                    </span>
+                </div>
+                <div class="title d-flex justify-content-between font-weight-bold">
+                    <span>Total</span>
+                    <span>
+                        <span class="currency">$</span>
+                        <span id="cart--total">13.2</span>
+                    </span>
+                </div>
             </div>
         </div>
         <!-- /.col-lg-3 -->
