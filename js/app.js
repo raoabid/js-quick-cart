@@ -7,7 +7,7 @@ let cartProductController = (function () {
         this.price = price;
     };
 
-    Product.prototype.amount = function () {
+    Product.prototype.getAmount = function () {
         this.amount = this.qty * this.price;
         return this.amount;
     }
@@ -66,11 +66,18 @@ let cartUiController = (function (productCtrl) {
         return parseInt(clickedItem.parentNode.parentNode.children[0].children[0].value);
     }
 
+    let updateCart = function (cart) {
+
+
+
+    }
+
 
     return {
         getProductDetails: getProductDetails,
         getDomStrings: getDomStrings,
-        getProductId: getProductId
+        getProductId: getProductId,
+        updateCart: updateCart
     }
 
 })(cartProductController);
@@ -92,8 +99,8 @@ let cartDataController = (function () {
 
     let findCartIndex = function (productId) {
         for (let i = 0; i < cart.products.length; i++) {
-            if (productId === cart.products[productId].id) {
-                return productId;
+            if (productId === cart.products[i].id) {
+                return i;
             }
         }
 
@@ -102,7 +109,6 @@ let cartDataController = (function () {
 
     let addToCart = function (productDetail) {
         // productDetail = { id: 11, name: "Strawberry", desc: "Strawberries are sweet and red", price: 3, qty: "2" }
-        console.warn(productDetail);
 
         let productIndex;
 
@@ -118,33 +124,26 @@ let cartDataController = (function () {
         // Check if the product is already in cart
         if (-1 !== cart.productsId.indexOf(productDetail.id)) {
             // if Yes: update that product
-            console.warn('Product already in Cart');
-           productIndex = findCartIndex(productDetail.id);
-            console.warn(productIndex)
+            // console.warn('Product already in Cart');
+            productIndex = findCartIndex(productDetail.id);
+
+            // update individual product
+            cart.products[productIndex].qty += productDetail.qty;
+            cart.products[productIndex].amount += productDetail.getAmount();
+            // console.warn('individual product updated');
+
         } else {
             // if no: add new product to cart
             productIndex = productDetail.id;
             // // update products list
-            // cart.products[productIndex] = productDetail;
+            cart.products.push(productDetail);
             // // update id list
-            // cart.productsId.push(productIndex);
-            // // update Subtotal
-            // cart.subTotal += productDetail.amount();
-            // // update tax
-            // cart.tax = cart.subTotal * taxPercent / 100;
-            // // update Total
-            // cart.totalAmount = cart.subTotal + cart.tax;
-            // // update cart Qty
-            // cart.totalQty += productDetail.qty;
+            cart.productsId.push(productDetail.id);
         }
 
-
-        // update products list
-        cart.products[productIndex] = productDetail;
-        // update id list
-        cart.productsId.push(productIndex);
+        // update TotalAmount, Qty, subTotal, tax,
         // update Subtotal
-        cart.subTotal += productDetail.amount();
+        cart.subTotal += productDetail.qty * productDetail.price;
         // update tax
         cart.taxAmount = cart.subTotal * taxPercent / 100;
         // update Total
@@ -152,10 +151,8 @@ let cartDataController = (function () {
         // update cart Qty
         cart.totalQty += productDetail.qty;
 
+        // Remove duplicates from the products id array
         cart.productsId = [...new Set(cart.productsId)];
-
-
-        // update TotalAmount, Qty, subTotal, tax,
 
         // return cart
         return cart;
@@ -185,10 +182,16 @@ let controller = (function (
 
     let ctrlAddToCart = function () {
         let cart, productDetails;
-        productDetails = UICtrl.getProductDetails(clickedItem);
-        cart = dataCtrl.addToCart(productDetails);
 
-        console.log(cart);
+        // Get Product details
+        productDetails = UICtrl.getProductDetails(clickedItem);
+
+        // Update Cart Data structure
+        cart = dataCtrl.addToCart(productDetails);
+        console.warn(cart);
+
+        // Update cart UI
+        UICtrl.updateCart(cart);
 
 
     }
