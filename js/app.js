@@ -16,9 +16,9 @@ let cartProductController = (function () {
     let productInfo = function () {
         return {
             11: new Product(11, 'Strawberry', 'Strawberries are sweet and red', 3, 'images/strawberry.png'),
-            13: new Product(13, 'Onions', 'Onions are a veggie and usually fresh', 5,  'images/onions.png'),
-            15: new Product(15, 'Potato', 'Potato are a the most used veggie', 4,  'images/potato.png'),
-            17: new Product(17, 'Tomato', 'Tomato are used to make Ketchup', 6,  'images/tomato.png'),
+            13: new Product(13, 'Onions', 'Onions are a veggie and usually fresh', 5, 'images/onions.png'),
+            15: new Product(15, 'Potato', 'Potato are a the most used veggie', 4, 'images/potato.png'),
+            17: new Product(17, 'Tomato', 'Tomato are used to make Ketchup', 6, 'images/tomato.png'),
         }
 
     }
@@ -46,7 +46,12 @@ let cartUiController = (function (productCtrl) {
         cartSubtotal: '#cart-subtotal',
         cartTax: '#cart-tax',
         cartTotal: '#cart-total',
-        cartProducts: '.cart-products'
+        cartProducts: '.cart-products',
+        deleteButton: '.delete-btn',
+        deleteButtonClass: 'delete-btn',
+        increaseQty: '.plus-btn',
+        decreaseQty: '.minus-btn',
+        shoppingCart: '.shopping-cart',
 
     }
 
@@ -134,7 +139,7 @@ let cartUiController = (function (productCtrl) {
 
     }
 
-    let clearCart = function(cart){
+    let clearCart = function (cart) {
 
         updateProductsList(cart);
         updateCartTotals(cart);
@@ -284,9 +289,27 @@ let controller = (function (
         });
     }
 
+    let removeProductListener = function () {
+
+        document.querySelector(domStrings.shoppingCart).addEventListener('click', function (e) {
+            const target = e.target;
+            console.warn('Remove Button clicked!');
+            console.log(domStrings.deleteButtonClass);
+            console.log(target.classList.contains(domStrings.deleteButtonClass));
+
+            if (target.classList.contains(domStrings.deleteButtonClass)) {
+                console.warn('inside: Remove Button clicked!');
+                clickedItem = target;
+                // ctrlAddToCart();
+            }
+        });
+
+
+    }
+
     let setupEventListener = function () {
         addToCartListener();
-
+        removeProductListener();
     }
 
     let init = function () {
