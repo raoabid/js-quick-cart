@@ -37,12 +37,11 @@ let cartProductController = (function () {
 
 let cartUiController = (function (productCtrl) {
 
-    let getDomStrings = function () {
-        return {
-            productGrid: '.products-grid',
-            addToCart: 'add-to-cart',
-            productQty: '.product-quantity'
-        }
+    let getDomStrings = {
+        productGrid: '.products-grid',
+        addToCart: 'add-to-cart',
+        productQty: '.product-quantity',
+        cartQty: '#cart-qty'
     }
 
     let getProductDetails = function (clickedItem) {
@@ -63,11 +62,21 @@ let cartUiController = (function (productCtrl) {
 
     let getProductQty = function (clickedItem) {
         // Get Product Qty
-        return parseInt(clickedItem.parentNode.parentNode.children[0].children[0].value);
+        return parseInt(
+            clickedItem
+                .parentNode
+                .parentNode
+                .children[0]
+                .children[0]
+                .value
+        );
     }
 
     let updateCart = function (cart) {
-
+        document.querySelector(getDomStrings.cartQty).textContent = cart.totalQty;
+        document.querySelector(getDomStrings.cartQty).textContent = cart.totalQty;
+        document.querySelector(getDomStrings.cartQty).textContent = cart.totalQty;
+        document.querySelector(getDomStrings.cartQty).textContent = cart.totalQty;
 
 
     }
@@ -178,7 +187,7 @@ let controller = (function (
 ) {
 
     let domStrings, clickedItem;
-    domStrings = UICtrl.getDomStrings();
+    domStrings = UICtrl.getDomStrings;
 
     let ctrlAddToCart = function () {
         let cart, productDetails;
