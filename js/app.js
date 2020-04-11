@@ -49,9 +49,10 @@ let cartUiController = (function (productCtrl) {
         cartProducts: '.cart-products',
         deleteButton: '.delete-btn',
         deleteButtonClass: 'delete-btn',
-        increaseQty: '.plus-btn',
-        decreaseQty: '.minus-btn',
+        increaseQtyClass: 'plus-btn',
+        decreaseQtyClass: 'minus-btn',
         shoppingCart: '.shopping-cart',
+        qtyInput: '.qty-input',
 
     }
 
@@ -63,6 +64,11 @@ let cartUiController = (function (productCtrl) {
 
         return product;
     }
+
+    let getCartProductId = function (clickedItem) {
+        return parseInt(clickedItem.parentNode.parentNode.dataset.id);
+    }
+
 
     let getProductId = function (clickedItem) {
         let productId;
@@ -112,7 +118,7 @@ let cartUiController = (function (productCtrl) {
                             <button class="plus-btn" type="button" name="button">
                                 <img src="images/plus.svg" alt=""/>
                             </button>
-                            <input type="text" name="name" value="${product.qty}">
+                            <input class="qty-input" type="text" name="name" value="${product.qty}">
                             <button class="minus-btn" type="button" name="button">
                                 <img src="images/minus.svg" alt=""/>
                             </button>
@@ -158,7 +164,8 @@ let cartUiController = (function (productCtrl) {
         getDomStrings: getDomStrings,
         getProductId: getProductId,
         updateCart: updateCart,
-        clearCart: clearCart
+        clearCart: clearCart,
+        getCartProductId: getCartProductId
     }
 
 })(cartProductController);
@@ -187,6 +194,62 @@ let cartDataController = (function () {
 
     }
 
+    let validateProductId = function (productId) {
+        // Make Sure its a number
+        if (typeof productId !== 'number' || isNaN(productId) || productId <= 0) {
+            alert('Product id could not be fetched properly');
+            console.warn('No Further processing!');
+            return false;
+        }
+        return true;
+
+    }
+
+    let validateIndex = function (index) {
+
+        if (typeof index === "undefined") {
+            alert('Product not found in the cart data structure');
+            console.warn('No Further processing!');
+            return false;
+        }
+        return true;
+    }
+
+    let removeFromCart = function (productIdToRemove) {
+
+        // console.warn(productIdToRemove);
+
+        let productIndex, product;
+
+        if (!validateProductId(productIdToRemove)) {
+            return cart;
+        }
+
+        productIndex = findCartIndex(productIdToRemove);
+
+        if (!validateIndex(productIndex)) {
+            return cart;
+        }
+
+        // Get the product to remove
+        product = cart.products[productIndex];
+
+        // Update Cart Properties before removing item
+        cart.subTotal -= product.amount;
+        cart.totalQty -= product.qty;
+        cart.taxAmount = cart.subTotal * taxPercent / 100;
+        cart.totalAmount = cart.subTotal + cart.taxAmount;
+
+        // remove from id list
+        cart.productsId.splice(cart.productsId.indexOf(productIdToRemove), 1);
+
+        // remove from products list
+        cart.products.splice(productIndex, 1);
+
+        // console.log(cart);
+        return cart;
+
+    }
 
     let addToCart = function (productDetail) {
         // productDetail = { id: 11, name: "Strawberry", desc: "Strawberries are sweet and red", price: 3, qty: "2" }
@@ -240,6 +303,70 @@ let cartDataController = (function () {
 
     }
 
+
+    let qtyIncrement = function (productId) {
+
+        let productIndex;
+
+        if (!validateProductId(productId)) {
+            return cart;
+        }
+
+        productIndex = findCartIndex(productId);
+
+        if (!validateIndex(productIndex)) {
+            return cart;
+        }
+
+        // Update the product to remove
+        cart.products[productIndex].qty += 1;
+        cart.products[productIndex].amount += cart.products[productIndex].price;
+
+        // Update Cart Properties
+        cart.subTotal += cart.products[productIndex].price;
+        cart.totalQty += 1;
+        cart.taxAmount = cart.subTotal * taxPercent / 100;
+        cart.totalAmount = cart.subTotal + cart.taxAmount;
+
+        return cart;
+
+    }
+
+    let qtyDecrement = function (productId) {
+
+        let productIndex;
+
+        if (!validateProductId(productId)) {
+            return cart;
+        }
+
+        productIndex = findCartIndex(productId);
+
+        if (!validateIndex(productIndex)) {
+            return cart;
+        }
+
+        // Make sure we dont go Negative!
+        if (cart.products[productIndex].qty <= 1) {
+            alert('There should at least be one quantity of product. You may click the remove button to remove this from cart');
+            console.warn('No Further processing!');
+            return cart;
+        }
+
+        // Update the product to remove
+        cart.products[productIndex].qty -= 1;
+        cart.products[productIndex].amount -= cart.products[productIndex].price;
+
+        // Update Cart Properties
+        cart.subTotal -= cart.products[productIndex].price;
+        cart.totalQty -= 1;
+        cart.taxAmount = cart.subTotal * taxPercent / 100;
+        cart.totalAmount = cart.subTotal + cart.taxAmount;
+
+        return cart;
+
+    }
+
     let getCart = function () {
         return cart;
     }
@@ -247,7 +374,10 @@ let cartDataController = (function () {
 
     return {
         addToCart: addToCart,
-        getCart: getCart
+        getCart: getCart,
+        removeFromCart: removeFromCart,
+        qtyIncrement: qtyIncrement,
+        qtyDecrement: qtyDecrement
     }
 
 })();
@@ -276,6 +406,47 @@ let controller = (function (
 
     }
 
+    let ctrlRemoveFromCart = function () {
+        // console.warn('inside: Remove Listener Triggered');
+
+        let cart, productIdToRemove;
+
+        // // Get Product details
+        productIdToRemove = UICtrl.getCartProductId(clickedItem);
+
+        // Update Cart Data structure
+        cart = dataCtrl.removeFromCart(productIdToRemove);
+
+        // Update cart UI
+        UICtrl.updateCart(cart);
+
+
+    }
+
+    let ctrlQtyChange = function (type ) { // 'increase' || 'decrease'
+        // console.warn('inside: Qty Increment');
+
+        let cart, productId;
+        cart = dataCtrl.getCart();
+
+        // // Get Product details
+        productId = UICtrl.getCartProductId(clickedItem);
+
+        // Update Cart Data structure
+        if ('increase' === type) {
+            cart = dataCtrl.qtyIncrement(productId);
+        } else if ('decrease' === type) {
+            cart = dataCtrl.qtyDecrement(productId);
+
+        }
+
+        // Update cart UI
+        UICtrl.updateCart(cart);
+
+
+    }
+
+
     let addToCartListener = function () {
         document.querySelector(domStrings.productGrid).addEventListener('click', function (e) {
             const target = e.target;
@@ -289,19 +460,60 @@ let controller = (function (
         });
     }
 
-    let removeProductListener = function () {
+    let removeFromCartListener = function () {
 
         document.querySelector(domStrings.shoppingCart).addEventListener('click', function (e) {
             const target = e.target;
-            console.warn('Remove Button clicked!');
-            console.log(domStrings.deleteButtonClass);
-            console.log(target.classList.contains(domStrings.deleteButtonClass));
-
             if (target.classList.contains(domStrings.deleteButtonClass)) {
-                console.warn('inside: Remove Button clicked!');
+                // console.warn('inside: Remove Button clicked!');
                 clickedItem = target;
-                // ctrlAddToCart();
+                ctrlRemoveFromCart();
             }
+        });
+
+
+    }
+
+    let qtyChangeListener = function () {
+
+        let type, qty;
+
+        // It can be:
+        // input Quantity
+        // increased Qty
+        // Decreased Qty
+
+        // Event for qty increase or decrease
+        document.querySelector(domStrings.shoppingCart).addEventListener('click', function (e) {
+            const target = e.target;
+            if (
+                target.classList.contains(domStrings.increaseQtyClass)
+                || target.parentNode.classList.contains(domStrings.increaseQtyClass)
+            ) {
+                type = 'increase';
+                if (target.classList.contains(domStrings.increaseQtyClass)) {
+                    clickedItem = target;
+                } else {
+                    clickedItem = target.parentNode;
+                }
+            } else if (
+                target.classList.contains(domStrings.decreaseQtyClass)
+                || target.parentNode.classList.contains(domStrings.decreaseQtyClass)
+            ) {
+                type = 'decrease';
+                if (target.classList.contains(domStrings.decreaseQtyClass)) {
+                    clickedItem = target;
+                } else {
+                    clickedItem = target.parentNode;
+                }
+            }
+            ctrlQtyChange(type);
+        });
+
+        document.querySelector(domStrings.qtyInput).addEventListener('change', function (e) {
+
+            // ctrlQtyChange();
+
         });
 
 
@@ -309,7 +521,8 @@ let controller = (function (
 
     let setupEventListener = function () {
         addToCartListener();
-        removeProductListener();
+        removeFromCartListener();
+        qtyChangeListener()
     }
 
     let init = function () {
@@ -325,6 +538,5 @@ let controller = (function (
 
 
 })(cartDataController, cartUiController, cartProductController);
-
 
 controller.init();
