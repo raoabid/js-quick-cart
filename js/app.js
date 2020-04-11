@@ -52,7 +52,7 @@ let cartUiController = (function (productCtrl) {
         increaseQtyClass: 'plus-btn',
         decreaseQtyClass: 'minus-btn',
         shoppingCart: '.shopping-cart',
-        qtyInput: '.qty-input',
+        qtyInput: 'qty-input',
 
     }
 
@@ -100,7 +100,6 @@ let cartUiController = (function (productCtrl) {
         return `<div class="item" data-id="${product.id}">
                         <div class="buttons">
                             <span class="delete-btn"></span>
-                            <span class="like-btn"></span>
                         </div>
                         <div class="image">
                             <img src="${product.imgSrc}" alt="${product.name}"/>
@@ -303,71 +302,57 @@ let cartDataController = (function () {
 
     }
 
-
-    let qtyIncrement = function (productId) {
+    let qtyChange = function (productId, qty) {
 
         let productIndex;
 
         if (!validateProductId(productId)) {
-            return cart;
+            return;
         }
 
         productIndex = findCartIndex(productId);
 
         if (!validateIndex(productIndex)) {
-            return cart;
+            return;
         }
 
-        // Update the product to remove
-        cart.products[productIndex].qty += 1;
-        cart.products[productIndex].amount += cart.products[productIndex].price;
+        console.log(cart.products[productIndex].qty);
+        // Make sure we dont go Negative!
+        if (qty <= 0) {
+            alert('There should at least be one quantity of product. You may click the remove button to remove this from cart');
+            console.warn('No Further processing!');
+            return;
+        }
 
-        // Update Cart Properties
-        cart.subTotal += cart.products[productIndex].price;
-        cart.totalQty += 1;
-        cart.taxAmount = cart.subTotal * taxPercent / 100;
-        cart.totalAmount = cart.subTotal + cart.taxAmount;
-
-        return cart;
+        cart.products[productIndex].qty = qty;
 
     }
 
-    let qtyDecrement = function (productId) {
 
-        let productIndex;
+    let recalculateCart = function () {
 
-        if (!validateProductId(productId)) {
-            return cart;
+        let subTotal, taxAmount, totalAmount, qty;
+        subTotal = taxAmount = totalAmount = qty = 0;
+
+        for (let i = 0; i < cart.products.length; i++) {
+            // Update individual product amount
+            // cart.products[i].amount = cart.products[i].getAmount();
+
+            subTotal += cart.products[i].getAmount();
+            qty += cart.products[i].qty
         }
 
-        productIndex = findCartIndex(productId);
-
-        if (!validateIndex(productIndex)) {
-            return cart;
-        }
-
-        // Make sure we dont go Negative!
-        if (cart.products[productIndex].qty <= 1) {
-            alert('There should at least be one quantity of product. You may click the remove button to remove this from cart');
-            console.warn('No Further processing!');
-            return cart;
-        }
-
-        // Update the product to remove
-        cart.products[productIndex].qty -= 1;
-        cart.products[productIndex].amount -= cart.products[productIndex].price;
-
-        // Update Cart Properties
-        cart.subTotal -= cart.products[productIndex].price;
-        cart.totalQty -= 1;
-        cart.taxAmount = cart.subTotal * taxPercent / 100;
+        cart.subTotal = subTotal;
+        cart.taxAmount = subTotal * taxPercent / 100;
         cart.totalAmount = cart.subTotal + cart.taxAmount;
-
-        return cart;
+        cart.totalQty = qty;
 
     }
 
     let getCart = function () {
+
+        recalculateCart();
+
         return cart;
     }
 
@@ -376,8 +361,7 @@ let cartDataController = (function () {
         addToCart: addToCart,
         getCart: getCart,
         removeFromCart: removeFromCart,
-        qtyIncrement: qtyIncrement,
-        qtyDecrement: qtyDecrement
+        qtyChange: qtyChange
     }
 
 })();
@@ -423,25 +407,20 @@ let controller = (function (
 
     }
 
-    let ctrlQtyChange = function (type ) { // 'increase' || 'decrease'
+    let ctrlQtyChange = function (qty) {
         // console.warn('inside: Qty Increment');
 
-        let cart, productId;
-        cart = dataCtrl.getCart();
+        let productId;
+
+        qty = parseInt(qty);
 
         // // Get Product details
         productId = UICtrl.getCartProductId(clickedItem);
 
-        // Update Cart Data structure
-        if ('increase' === type) {
-            cart = dataCtrl.qtyIncrement(productId);
-        } else if ('decrease' === type) {
-            cart = dataCtrl.qtyDecrement(productId);
-
-        }
+        dataCtrl.qtyChange(productId, qty);
 
         // Update cart UI
-        UICtrl.updateCart(cart);
+        UICtrl.updateCart(dataCtrl.getCart());
 
 
     }
@@ -476,43 +455,62 @@ let controller = (function (
 
     let qtyChangeListener = function () {
 
-        let type, qty;
 
         // It can be:
-        // input Quantity
-        // increased Qty
-        // Decreased Qty
+        //         // input Quantity
+        //         // increased Qty
+        //         // Decreased Qty
 
         // Event for qty increase or decrease
         document.querySelector(domStrings.shoppingCart).addEventListener('click', function (e) {
+            let qtyInput;
             const target = e.target;
+
+
             if (
                 target.classList.contains(domStrings.increaseQtyClass)
                 || target.parentNode.classList.contains(domStrings.increaseQtyClass)
             ) {
-                type = 'increase';
+                // get the adjusted clickedItem
                 if (target.classList.contains(domStrings.increaseQtyClass)) {
                     clickedItem = target;
                 } else {
                     clickedItem = target.parentNode;
                 }
+
+                // get qtyInput input field
+                qtyInput = clickedItem.parentNode.children[1];
+                // update Quantity
+                qtyInput.value = parseInt(qtyInput.value) + 1;
+
+                ctrlQtyChange(qtyInput.value);
             } else if (
                 target.classList.contains(domStrings.decreaseQtyClass)
                 || target.parentNode.classList.contains(domStrings.decreaseQtyClass)
             ) {
-                type = 'decrease';
                 if (target.classList.contains(domStrings.decreaseQtyClass)) {
                     clickedItem = target;
                 } else {
                     clickedItem = target.parentNode;
                 }
+
+                // get qtyInput input field
+                qtyInput = clickedItem.parentNode.children[1];
+                // update Quantity
+                qtyInput.value = parseInt(qtyInput.value) - 1;
+
+                ctrlQtyChange(qtyInput.value);
             }
-            ctrlQtyChange(type);
         });
 
-        document.querySelector(domStrings.qtyInput).addEventListener('change', function (e) {
+        document.querySelector(domStrings.shoppingCart).addEventListener('change', function (e) {
+            const target = e.target;
 
-            // ctrlQtyChange();
+            if (target.classList.contains(domStrings.qtyInput)) {
+                clickedItem = target;
+
+                ctrlQtyChange(parseInt(clickedItem.value));
+            }
 
         });
 
