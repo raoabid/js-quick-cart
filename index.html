@@ -56,7 +56,7 @@
 
             <div class="row products-grid">
 
-                <div class="col-lg-6 col-md-6 mb-4">
+                <div class="col-lg-6 col-md-6 mb-4 product" id="product-id-11">
                     <div class="card h-100">
                         <a href="#"><img class="card-img-top product-image" src="images/strawberry.png"
                                          alt=""></a>
@@ -73,8 +73,8 @@
                             <div class="input-group mb-2">
                                 <input type="number" class="product-quantity form-control" value="1" min="1">
                             </div>
-                            <div class="add-to-cart">
-                                <button class="plus-item btn btn-primary input-group-addon" data-name="Orange">Add to
+                            <div class="add-to-cart-cont">
+                                <button class="plus-item btn btn-primary input-group-addon add-to-cart">Add to
                                     Cart
                                 </button>
                             </div>
@@ -82,13 +82,14 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-6 col-md-6 mb-4">
+                <!-- /.product-id-11 -->
+                <div class="col-lg-6 col-md-6 mb-4 product" id="product-id-13">
                     <div class="card h-100">
                         <a href="#"><img class="card-img-top product-image" src="images/onions.png"
                                          alt=""></a>
                         <div class="card-body">
                             <h4 class="card-title product-name">
-                                <a href="#">Onions</a>
+                                <a href="#">onions</a>
                             </h4>
                             <h5 class="product-price">$5</h5>
                             <p class="card-text product-desc">Lorem ipsum dolor sit amet, consectetur adipisicing elit.
@@ -99,8 +100,8 @@
                             <div class="input-group mb-2">
                                 <input type="number" class="product-quantity form-control" value="1" min="1">
                             </div>
-                            <div class="add-to-cart">
-                                <button class="plus-item btn btn-primary input-group-addon" data-name="Orange">Add to
+                            <div class="add-to-cart-cont">
+                                <button class="plus-item btn btn-primary input-group-addon add-to-cart">Add to
                                     Cart
                                 </button>
                             </div>
@@ -108,8 +109,8 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="col-lg-6 col-md-6 mb-4">
+                <!-- /.product-id-13 -->
+                <div class="col-lg-6 col-md-6 mb-4 product" id="product-id-14">
                     <div class="card h-100">
                         <a href="#"><img class="card-img-top product-image" src="images/potato.png"
                                          alt=""></a>
@@ -126,8 +127,8 @@
                             <div class="input-group mb-2">
                                 <input type="number" class="product-quantity form-control" value="1" min="1">
                             </div>
-                            <div class="add-to-cart">
-                                <button class="plus-item btn btn-primary input-group-addon" data-name="Orange">Add to
+                            <div class="add-to-cart-cont">
+                                <button class="plus-item btn btn-primary input-group-addon add-to-cart">Add to
                                     Cart
                                 </button>
                             </div>
@@ -135,8 +136,8 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="col-lg-6 col-md-6 mb-4">
+                <!-- /.product-id-14 -->
+                <div class="col-lg-6 col-md-6 mb-4 product" id="product-id-21">
                     <div class="card h-100">
                         <a href="#"><img class="card-img-top product-image" src="images/tomato.png"
                                          alt=""></a>
@@ -153,8 +154,8 @@
                             <div class="input-group mb-2">
                                 <input type="number" class="product-quantity form-control" value="1" min="1">
                             </div>
-                            <div class="add-to-cart">
-                                <button class="plus-item btn btn-primary input-group-addon" data-name="Orange">Add to
+                            <div class="add-to-cart-cont">
+                                <button class="plus-item btn btn-primary input-group-addon add-to-cart">Add to
                                     Cart
                                 </button>
                             </div>
@@ -162,6 +163,7 @@
                         </div>
                     </div>
                 </div>
+                <!-- /.product-id-21 -->
 
             </div><!-- /.products-grid -->
 
@@ -178,40 +180,34 @@
                     <span id="cart-qty" class="badge badge-pill badge-success">2</span>
                 </div>
                 <div class="cart-products">
-                    <!-- Product #1 -->
                     <div class="item" data-id="11">
                         <div class="buttons">
                             <span class="delete-btn"></span>
-                            <span class="like-btn"></span>
                         </div>
                         <div class="image">
-                            <img src="images/potato.png" alt=""/>
+                            <img src="images/strawberry.png" alt="Strawberry"/>
                         </div>
                         <div class="description">
-                            <span>Potato</span>
+                            <span>Strawberry</span>
                             <span>
                                 <span class="at-the-rate">@ </span>
                                 <span class="currency">$</span>
-                                <span class="price">13.2</span>
+                                <span class="price">3</span>
                             </span>
                         </div>
-
                         <div class="quantity">
                             <button class="plus-btn" type="button" name="button">
                                 <img src="images/plus.svg" alt=""/>
                             </button>
-                            <input type="text" name="name" value="2">
+                            <input class="qty-input" type="text" name="name" value="2">
                             <button class="minus-btn" type="button" name="button">
                                 <img src="images/minus.svg" alt=""/>
                             </button>
                         </div>
-
-                        <div class="total-price">$12</div>
+                        <div class="total-price">6</div>
                     </div>
 
-                </div>
-
-
+                </div><!-- /.cart-products -->
                 <div class="title d-flex justify-content-between font-weight-bold">
                     <span>Subtotal</span>
                     <span>
@@ -255,7 +251,6 @@
 <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
 <script src="js/layout.js"></script>
-
 </body>
 
 </html>
