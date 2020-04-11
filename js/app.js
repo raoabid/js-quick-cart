@@ -17,8 +17,8 @@ let cartProductController = (function () {
         return {
             11: new Product(11, 'Strawberry', 'Strawberries are sweet and red', 3, 'images/strawberry.png'),
             13: new Product(13, 'Onions', 'Onions are a veggie and usually fresh', 5, 'images/onions.png'),
-            15: new Product(15, 'Potato', 'Potato are a the most used veggie', 4, 'images/potato.png'),
-            17: new Product(17, 'Tomato', 'Tomato are used to make Ketchup', 6, 'images/tomato.png'),
+            14: new Product(14, 'Potato', 'Potato are a the most used veggie', 4, 'images/potato.png'),
+            21: new Product(21, 'Tomato', 'Tomato are used to make Ketchup', 6, 'images/tomato.png'),
         }
 
     }
@@ -316,7 +316,7 @@ let cartDataController = (function () {
             return;
         }
 
-        console.log(cart.products[productIndex].qty);
+        // console.log(cart.products[productIndex].qty);
         // Make sure we dont go Negative!
         if (qty <= 0) {
             alert('There should at least be one quantity of product. You may click the remove button to remove this from cart');
